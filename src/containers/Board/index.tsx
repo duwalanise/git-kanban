@@ -19,7 +19,7 @@ const Board = () => {
 
   return (
     <DndProvider backend={HTML5Backend}>
-      <Container>
+      <Container fluid className="board-wrapper">
         <Row>
           <Col xs={4}>
             <Drop<IssueType>

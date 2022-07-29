@@ -25,9 +25,13 @@ const Drop = <T extends { id: string }>({
   }));
 
   return (
-    <div>
-      <div>{title}</div>
-      <div ref={drop} style={{ height: 300, backgroundColor: isOver ? 'red' : 'white' }}>
+    <>
+      <h3>{title}</h3>
+      <div
+        ref={drop}
+        className="drop-container"
+        style={{ border: `solid  3px ${isOver ? '#ccc' : '#eee'}` }}
+      >
         <div>
           {items.map((item: T) =>
             ItemDisplay ? (
@@ -38,7 +42,7 @@ const Drop = <T extends { id: string }>({
           )}
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

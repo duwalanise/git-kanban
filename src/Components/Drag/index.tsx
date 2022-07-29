@@ -1,3 +1,4 @@
+import moment from 'moment';
 import { useDrag } from 'react-dnd';
 import { IssueType } from '../../Store/Issues';
 
@@ -17,8 +18,11 @@ const Box = ({ item }: DragProps) => {
 
   return (
     <div ref={dragPreview} style={{ opacity: isDragging ? 0.5 : 1 }}>
-      <div role="Handle" ref={drag}>
-        {item.title}
+      <div role="Handle" ref={drag} className="drag-item">
+        <h4>{item.title}</h4>
+        <p>
+          #{item.number} opened {moment(item.createdAt).fromNow()} by {item.opener}
+        </p>
       </div>
     </div>
   );
