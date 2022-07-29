@@ -1,6 +1,8 @@
 import axios from 'axios';
 import { flow, Instance, types } from 'mobx-state-tree';
 import IssueStatus, { IssueStatusType } from '../../Constants/issueStatus';
+import { generateApiUrl } from '../../Utils/urlHelper';
+import Storage from '../../Utils/storage';
 
 const Issue = types
   .model({
@@ -21,6 +23,7 @@ export type IssueType = Instance<typeof Issue>;
 
 const Issues = types
   .model({
+    url: '',
     items: types.optional(types.array(Issue), []),
   })
   .views((self) => ({
@@ -35,8 +38,14 @@ const Issues = types
     },
   }))
   .actions((self) => ({
-    fetch: flow(function* (url: string) {
+    setUrl(url: string) {
+      self.url = url;
+    },
+    fetch: flow(function* () {
       try {
+        self.items.clear();
+        const { url, key } = generateApiUrl(self.url);
+        const statusMap = Storage.getItem(key);
         const { data } = yield axios.get(url);
         (data || []).forEach(({ title, created_at, number, user, id }: any) => {
           self.items.push(
@@ -46,7 +55,7 @@ const Issues = types
               createdAt: created_at,
               number,
               opener: user.login,
-              status: IssueStatus.TODO,
+              status: statusMap[id] || IssueStatus.TODO,
             }),
           );
         });
@@ -54,6 +63,13 @@ const Issues = types
         console.warn(error);
       }
     }),
+    updateStatus(status: IssueStatusType, item: IssueType) {
+      item.setStatus(status);
+      const { key } = generateApiUrl(self.url);
+      const statusMap = Storage.getItem(key);
+      statusMap[item.id] = status;
+      Storage.setItem(key, statusMap);
+    },
   }))
   .named('Issues');
 

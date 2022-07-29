@@ -14,7 +14,7 @@ const Board = () => {
   const { issues } = useStore();
 
   const handleDrop = (dropTarget: IssueStatusType) => (item: IssueType) => {
-    item.setStatus(dropTarget);
+    issues.updateStatus(dropTarget, item);
   };
 
   return (

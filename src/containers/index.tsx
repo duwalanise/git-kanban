@@ -1,25 +1,27 @@
-import { FC, useEffect, useState } from 'react';
+import { observer } from 'mobx-react';
+import { FC, useEffect } from 'react';
 import { Container } from 'react-bootstrap';
 import IssueInput from '../Components/IssueInput';
 import { useStore } from '../Store';
 import Board from './Board';
 
 const Main: FC = () => {
-  const [url, setGitUrl] = useState('');
-  const { issues } = useStore();
+  const {
+    issues: { url, setUrl, fetch },
+  } = useStore();
 
   useEffect(() => {
     if (url) {
-      issues.fetch(url);
+      fetch();
     }
   }, [url]);
 
   return (
     <Container fluid className="wrapper" data-testid="container">
-      <IssueInput issueUrl={url} onUpdate={setGitUrl}></IssueInput>
+      <IssueInput issueUrl={url} onUpdate={setUrl}></IssueInput>
       <Board />
     </Container>
   );
 };
 
-export default Main;
+export default observer(Main);
